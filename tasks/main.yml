@@ -1,2 +1,137 @@
 ---
 # tasks file for godot
+
+- name: Install required packages (RPM)
+  package:
+    name:
+      - python3
+      - python3-pip
+    state: present
+  when:
+    (ansible_distribution == 'RedHat') or
+    (ansible_distribution == 'Fedora') or
+    (ansible_distribution == 'CentOS')
+
+- name: Install required python3 modules
+  pip:
+    executable: pip3
+    name: scons
+
+- name: Clone the godot engine
+  git:
+    repo: 'https://github.com/godotengine/godot.git'
+    dest: "{{ git_checkout }}"
+    version: 'master'
+
+- name: Create Godot HOME
+  file:
+    path: "{{ godot_home }}"
+    state: directory
+    mode: '0755'
+
+# godot.x11.opt.tools.64
+# TODO: Fix the scons command
+- name: Compile godot.x11.opt.tools.64
+  shell:
+    cmd: scons platform=x11 target=release_debug "${SCONS_FLAGS[@]}" || true
+    creates: "{{ git_checkout }}/bin/godot.x11.opt.tools.64"
+    chdir: "{{ git_checkout }}"
+
+- name: Strip debug symbols from godot.x11.opt.tools.64
+  shell:
+    cmd: strip "bin/godot.x11.opt.tools.64"
+    chdir: "{{ git_checkout }}"
+  when: (strip_debug | bool)
+
+- name: Install godot.x11.opt.tools.64 in Godot HOME
+  file:
+    src: "{{ git_checkout }}/bin/godot.x11.opt.tools.64"
+    dest: "{{ godot_home }}/godot"
+    mode: '0755'
+  when: (install_godot | bool)
+
+# godot.x11.opt.debug.64
+# TODO: Fix the scons command
+- name: Compile godot.x11.opt.debug.64
+  shell:
+    cmd: scons platform=x11 tools=no target=release_debug "${SCONS_FLAGS[@]}"
+    creates: "{{ git_checkout }}/bin/godot.x11.opt.debug.64"
+    chdir: "{{ git_checkout }}"
+
+- name: Strip debug symbols from godot.x11.opt.debug.64
+  shell:
+    cmd: strip "bin/godot.x11.opt.debug.64"
+    chdir: "{{ git_checkout }}"
+  when: (strip_debug | bool)
+
+- name: Install godot.x11.opt.debug.64 in Godot HOME
+  file:
+    src: "{{ git_checkout }}/bin/godot.x11.opt.debug.64"
+    dest: "{{ godot_home }}/godot-runner-debug"
+    mode: '0755'
+  when: (install_godot | bool)
+
+# godot.x11.opt.64
+# TODO: Fix the scons command
+- name: Compile godot.x11.opt.64
+  shell:
+    cmd: scons platform=x11 tools=no target=release "${SCONS_FLAGS[@]}"
+    creates: "{{ git_checkout }}/bin/godot.x11.opt.64"
+    chdir: "{{ git_checkout }}"
+
+- name: Strip debug symbols from godot.x11.opt.64
+  shell:
+    cmd: strip "bin/godot.x11.opt.64"
+    chdir: "{{ git_checkout }}"
+  when: (strip_debug | bool)
+
+- name: Install godot.x11.opt.64 in Godot HOME
+  file:
+    src: "{{ git_checkout }}/bin/godot.x11.opt.64"
+    dest: "{{ godot_home }}/godot-runner"
+    mode: '0755'
+  when: (install_godot | bool)
+
+
+# godot_server.x11.opt.tools.64
+# TODO: Fix the scons command
+- name: Compile godot_server.x11.opt.tools.64
+  shell:
+    cmd: scons platform=server target=release_debug "${SCONS_FLAGS[@]}"
+    creates: "{{ git_checkout }}/bin/godot_server.x11.opt.tools.64"
+    chdir: "{{ git_checkout }}"
+
+- name: Strip debug symbols from godot_server.x11.opt.tools.64
+  shell:
+    cmd: strip "bin/godot_server.x11.opt.tools.64"
+    chdir: "{{ git_checkout }}"
+  when: (strip_debug | bool)
+
+- name: Install godot_server.x11.opt.tools.64 in Godot HOME
+  file:
+    src: "{{ git_checkout }}/bin/godot_server.x11.opt.tools.64"
+    dest: "{{ godot_home }}/godot-headless"
+    mode: '0755'
+  when: (install_godot | bool)
+
+
+# godot_server.x11.opt.64
+# TODO: Fix the scons command
+- name: Compile godot_server.x11.opt.64
+  shell:
+    cmd: scons platform=server tools=no target=release "${SCONS_FLAGS[@]}"
+    creates: "{{ git_checkout }}/bin/godot_server.x11.opt.64"
+    chdir: "{{ git_checkout }}"
+
+- name: Strip debug symbols from godot_server.x11.opt.64
+  shell:
+    cmd: strip "bin/godot_server.x11.opt.64"
+    chdir: "{{ git_checkout }}"
+  when: (strip_debug | bool)
+
+- name: Install godot_server.x11.opt.64 in Godot HOME
+  file:
+    src: "{{ git_checkout }}/bin/godot_server.x11.opt.64"
+    dest: "{{ godot_home }}/godot-server"
+    mode: '0755'
+  when: (install_godot | bool)

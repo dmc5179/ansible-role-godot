@@ -1,2 +1,14 @@
 ---
 # vars file for godot
+
+threads: 2
+
+scons_flags: '"use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"'
+
+git_checkout: '/opt/godot'
+
+strip_debug: true
+
+install_godot: true
+
+godot_home: '$HOME/.local/bin'
