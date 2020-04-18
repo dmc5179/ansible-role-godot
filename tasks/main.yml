@@ -30,10 +30,9 @@
     mode: '0755'
 
 # godot.x11.opt.tools.64
-# TODO: Fix the scons command
 - name: Compile godot.x11.opt.tools.64
   shell:
-    cmd: scons platform=x11 target=release_debug "${SCONS_FLAGS[@]}" || true
+    cmd: scons platform=x11 target=release_debug "{{ scons_flags }}"
     creates: "{{ git_checkout }}/bin/godot.x11.opt.tools.64"
     chdir: "{{ git_checkout }}"
 
@@ -51,10 +50,9 @@
   when: (install_godot | bool)
 
 # godot.x11.opt.debug.64
-# TODO: Fix the scons command
 - name: Compile godot.x11.opt.debug.64
   shell:
-    cmd: scons platform=x11 tools=no target=release_debug "${SCONS_FLAGS[@]}"
+    cmd: scons platform=x11 tools=no target=release_debug "{{ scons_flags }}"
     creates: "{{ git_checkout }}/bin/godot.x11.opt.debug.64"
     chdir: "{{ git_checkout }}"
 
@@ -72,10 +70,9 @@
   when: (install_godot | bool)
 
 # godot.x11.opt.64
-# TODO: Fix the scons command
 - name: Compile godot.x11.opt.64
   shell:
-    cmd: scons platform=x11 tools=no target=release "${SCONS_FLAGS[@]}"
+    cmd: scons platform=x11 tools=no target=release "{{ scons_flags }}"
     creates: "{{ git_checkout }}/bin/godot.x11.opt.64"
     chdir: "{{ git_checkout }}"
 
@@ -94,10 +91,9 @@
 
 
 # godot_server.x11.opt.tools.64
-# TODO: Fix the scons command
 - name: Compile godot_server.x11.opt.tools.64
   shell:
-    cmd: scons platform=server target=release_debug "${SCONS_FLAGS[@]}"
+    cmd: scons platform=server target=release_debug "{{ scons_flags }}"
     creates: "{{ git_checkout }}/bin/godot_server.x11.opt.tools.64"
     chdir: "{{ git_checkout }}"
 
@@ -116,10 +112,9 @@
 
 
 # godot_server.x11.opt.64
-# TODO: Fix the scons command
 - name: Compile godot_server.x11.opt.64
   shell:
-    cmd: scons platform=server tools=no target=release "${SCONS_FLAGS[@]}"
+    cmd: scons platform=server tools=no target=release "{{ scons_flags }}"
     creates: "{{ git_checkout }}/bin/godot_server.x11.opt.64"
     chdir: "{{ git_checkout }}"
 
