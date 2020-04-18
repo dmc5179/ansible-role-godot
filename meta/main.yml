@@ -1,0 +1,28 @@
+---
+galaxy_info:
+  playbook_name: godot
+  author: Dan Clark
+  description: Role to compile and install godot on Linux hosts
+  company: Red Hat
+
+  license: GPLv3
+
+  min_ansible_version: 2.2
+
+  platforms:
+    - name: EL
+      versions:
+        - 7
+        - 8
+    - name: Fedora
+      versions:
+        - 31
+    - name: Amazon
+      versions:
+        - "2017.12"
+
+  galaxy_tags:
+    - go
+    - godot
+
+dependencies: []
