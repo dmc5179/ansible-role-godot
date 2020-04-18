@@ -31,13 +31,13 @@
 
 # godot.x11.opt.tools.64
 - name: Compile godot.x11.opt.tools.64
-  shell:
+  command:
     cmd: scons platform=x11 target=release_debug "{{ scons_flags }}"
     creates: "{{ git_checkout }}/bin/godot.x11.opt.tools.64"
     chdir: "{{ git_checkout }}"
 
 - name: Strip debug symbols from godot.x11.opt.tools.64
-  shell:
+  command:
     cmd: strip "bin/godot.x11.opt.tools.64"
     chdir: "{{ git_checkout }}"
   when: (strip_debug | bool)
@@ -51,13 +51,13 @@
 
 # godot.x11.opt.debug.64
 - name: Compile godot.x11.opt.debug.64
-  shell:
+  command:
     cmd: scons platform=x11 tools=no target=release_debug "{{ scons_flags }}"
     creates: "{{ git_checkout }}/bin/godot.x11.opt.debug.64"
     chdir: "{{ git_checkout }}"
 
 - name: Strip debug symbols from godot.x11.opt.debug.64
-  shell:
+  command:
     cmd: strip "bin/godot.x11.opt.debug.64"
     chdir: "{{ git_checkout }}"
   when: (strip_debug | bool)
@@ -71,13 +71,13 @@
 
 # godot.x11.opt.64
 - name: Compile godot.x11.opt.64
-  shell:
+  command:
     cmd: scons platform=x11 tools=no target=release "{{ scons_flags }}"
     creates: "{{ git_checkout }}/bin/godot.x11.opt.64"
     chdir: "{{ git_checkout }}"
 
 - name: Strip debug symbols from godot.x11.opt.64
-  shell:
+  command:
     cmd: strip "bin/godot.x11.opt.64"
     chdir: "{{ git_checkout }}"
   when: (strip_debug | bool)
@@ -92,13 +92,13 @@
 
 # godot_server.x11.opt.tools.64
 - name: Compile godot_server.x11.opt.tools.64
-  shell:
+  command:
     cmd: scons platform=server target=release_debug "{{ scons_flags }}"
     creates: "{{ git_checkout }}/bin/godot_server.x11.opt.tools.64"
     chdir: "{{ git_checkout }}"
 
 - name: Strip debug symbols from godot_server.x11.opt.tools.64
-  shell:
+  command:
     cmd: strip "bin/godot_server.x11.opt.tools.64"
     chdir: "{{ git_checkout }}"
   when: (strip_debug | bool)
@@ -113,13 +113,13 @@
 
 # godot_server.x11.opt.64
 - name: Compile godot_server.x11.opt.64
-  shell:
+  command:
     cmd: scons platform=server tools=no target=release "{{ scons_flags }}"
     creates: "{{ git_checkout }}/bin/godot_server.x11.opt.64"
     chdir: "{{ git_checkout }}"
 
 - name: Strip debug symbols from godot_server.x11.opt.64
-  shell:
+  command:
     cmd: strip "bin/godot_server.x11.opt.64"
     chdir: "{{ git_checkout }}"
   when: (strip_debug | bool)
