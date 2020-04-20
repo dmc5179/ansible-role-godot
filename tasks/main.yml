@@ -1,11 +1,17 @@
 ---
 # tasks file for godot
 
+# Need GCC >= 7 so no RHEL 7
 - name: Install required packages (RPM)
   package:
     name:
       - python3
       - python3-pip
+      - xorg-x11-server-devel
+      - libXcursor-devel
+      - libXinerama-devel
+      - libXrandr-devel
+      - libXi-devel
     state: present
   when:
     (ansible_distribution == 'RedHat') or
@@ -32,7 +38,7 @@
 # godot.x11.opt.tools.64
 - name: Compile godot.x11.opt.tools.64
   command:
-    cmd: scons platform=x11 target=release_debug "{{ scons_flags }}"
+    cmd: scons platform=linuxbsd target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
     creates: "{{ git_checkout }}/bin/godot.x11.opt.tools.64"
     chdir: "{{ git_checkout }}"
 
@@ -52,7 +58,7 @@
 # godot.x11.opt.debug.64
 - name: Compile godot.x11.opt.debug.64
   command:
-    cmd: scons platform=x11 tools=no target=release_debug "{{ scons_flags }}"
+    cmd: scons platform=linuxbsd tools=no target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
     creates: "{{ git_checkout }}/bin/godot.x11.opt.debug.64"
     chdir: "{{ git_checkout }}"
 
@@ -72,7 +78,7 @@
 # godot.x11.opt.64
 - name: Compile godot.x11.opt.64
   command:
-    cmd: scons platform=x11 tools=no target=release "{{ scons_flags }}"
+    cmd: scons platform=linuxbsd tools=no target=release "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
     creates: "{{ git_checkout }}/bin/godot.x11.opt.64"
     chdir: "{{ git_checkout }}"
 
@@ -93,7 +99,7 @@
 # godot_server.x11.opt.tools.64
 - name: Compile godot_server.x11.opt.tools.64
   command:
-    cmd: scons platform=server target=release_debug "{{ scons_flags }}"
+    cmd: scons platform=server target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
     creates: "{{ git_checkout }}/bin/godot_server.x11.opt.tools.64"
     chdir: "{{ git_checkout }}"
 
@@ -114,7 +120,7 @@
 # godot_server.x11.opt.64
 - name: Compile godot_server.x11.opt.64
   command:
-    cmd: scons platform=server tools=no target=release "{{ scons_flags }}"
+    cmd: scons platform=server tools=no target=release "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
     creates: "{{ git_checkout }}/bin/godot_server.x11.opt.64"
     chdir: "{{ git_checkout }}"
 
