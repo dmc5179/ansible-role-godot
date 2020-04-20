@@ -3,15 +3,17 @@
 
 # Need GCC >= 7 so no RHEL 7
 - name: Install required packages (RPM)
-  package:
+  yum:
     name:
       - python3
       - python3-pip
-      - xorg-x11-server-devel
       - libXcursor-devel
       - libXinerama-devel
       - libXrandr-devel
       - libXi-devel
+      - gcc
+      - clang
+      - git
     state: present
   when:
     (ansible_distribution == 'RedHat') or
@@ -22,6 +24,9 @@
   pip:
     executable: pip3
     name: scons
+
+  environment:
+    PATH: /usr/local/bin:{{ ansible_env.PATH }}
 
 - name: Clone the godot engine
   git:
@@ -38,7 +43,7 @@
 # godot.x11.opt.tools.64
 - name: Compile godot.x11.opt.tools.64
   command:
-    cmd: scons platform=linuxbsd target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
+    cmd: /usr/local/bin/scons platform=linuxbsd target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
     creates: "{{ git_checkout }}/bin/godot.x11.opt.tools.64"
     chdir: "{{ git_checkout }}"
 
