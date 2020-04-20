@@ -11,9 +11,13 @@
       - libXinerama-devel
       - libXrandr-devel
       - libXi-devel
+      - libGL-devel
       - gcc
+      - gcc-c++
+      - gcc-go
       - clang
       - git
+      - make
     state: present
   when:
     (ansible_distribution == 'RedHat') or
@@ -40,63 +44,66 @@
     state: directory
     mode: '0755'
 
-# godot.x11.opt.tools.64
-- name: Compile godot.x11.opt.tools.64
+# godot.linuxbsd.opt.tools.64
+- name: Compile godot.linuxbsd.opt.tools.64
   command:
-    cmd: /usr/local/bin/scons platform=linuxbsd target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
-    creates: "{{ git_checkout }}/bin/godot.x11.opt.tools.64"
+    cmd: /usr/local/bin/scons platform=linuxbsd target=release_debug {{ scons_flags }}
+    creates: "{{ git_checkout }}/bin/godot.linuxbsd.opt.tools.64"
     chdir: "{{ git_checkout }}"
 
-- name: Strip debug symbols from godot.x11.opt.tools.64
+- name: Strip debug symbols from godot.linuxbsd.opt.tools.64
   command:
-    cmd: strip "bin/godot.x11.opt.tools.64"
+    cmd: strip "bin/godot.linuxbsd.opt.tools.64"
     chdir: "{{ git_checkout }}"
   when: (strip_debug | bool)
 
-- name: Install godot.x11.opt.tools.64 in Godot HOME
-  file:
-    src: "{{ git_checkout }}/bin/godot.x11.opt.tools.64"
+- name: Install godot.linuxbsd.opt.tools.64 in Godot HOME
+  copy:
+    src: "{{ git_checkout }}/bin/godot.linuxbsd.opt.tools.64"
     dest: "{{ godot_home }}/godot"
+    remote_src: true
     mode: '0755'
   when: (install_godot | bool)
 
-# godot.x11.opt.debug.64
-- name: Compile godot.x11.opt.debug.64
+# godot.linuxbsd.opt.debug.64
+- name: Compile godot.linuxbsd.opt.debug.64
   command:
     cmd: scons platform=linuxbsd tools=no target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
-    creates: "{{ git_checkout }}/bin/godot.x11.opt.debug.64"
+    creates: "{{ git_checkout }}/bin/godot.linuxbsd.opt.debug.64"
     chdir: "{{ git_checkout }}"
 
-- name: Strip debug symbols from godot.x11.opt.debug.64
+- name: Strip debug symbols from godot.linuxbsd.opt.debug.64
   command:
-    cmd: strip "bin/godot.x11.opt.debug.64"
+    cmd: strip "bin/godot.linuxbsd.opt.debug.64"
     chdir: "{{ git_checkout }}"
   when: (strip_debug | bool)
 
-- name: Install godot.x11.opt.debug.64 in Godot HOME
-  file:
-    src: "{{ git_checkout }}/bin/godot.x11.opt.debug.64"
+- name: Install godot.linuxbsd.opt.debug.64 in Godot HOME
+  copy:
+    src: "{{ git_checkout }}/bin/godot.linuxbsd.opt.debug.64"
     dest: "{{ godot_home }}/godot-runner-debug"
+    remote_src: true
     mode: '0755'
   when: (install_godot | bool)
 
-# godot.x11.opt.64
-- name: Compile godot.x11.opt.64
+# godot.linuxbsd.opt.64
+- name: Compile godot.linuxbsd.opt.64
   command:
     cmd: scons platform=linuxbsd tools=no target=release "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
-    creates: "{{ git_checkout }}/bin/godot.x11.opt.64"
+    creates: "{{ git_checkout }}/bin/godot.linuxbsd.opt.64"
     chdir: "{{ git_checkout }}"
 
-- name: Strip debug symbols from godot.x11.opt.64
+- name: Strip debug symbols from godot.linuxbsd.opt.64
   command:
-    cmd: strip "bin/godot.x11.opt.64"
+    cmd: strip "bin/godot.linuxbsd.opt.64"
     chdir: "{{ git_checkout }}"
   when: (strip_debug | bool)
 
-- name: Install godot.x11.opt.64 in Godot HOME
-  file:
-    src: "{{ git_checkout }}/bin/godot.x11.opt.64"
+- name: Install godot.linuxbsd.opt.64 in Godot HOME
+  copy:
+    src: "{{ git_checkout }}/bin/godot.linuxbsd.opt.64"
     dest: "{{ godot_home }}/godot-runner"
+    remote_src: true
     mode: '0755'
   when: (install_godot | bool)
 
@@ -115,9 +122,10 @@
   when: (strip_debug | bool)
 
 - name: Install godot_server.x11.opt.tools.64 in Godot HOME
-  file:
+  copy:
     src: "{{ git_checkout }}/bin/godot_server.x11.opt.tools.64"
     dest: "{{ godot_home }}/godot-headless"
+    remote_src: true
     mode: '0755'
   when: (install_godot | bool)
 
@@ -136,8 +144,9 @@
   when: (strip_debug | bool)
 
 - name: Install godot_server.x11.opt.64 in Godot HOME
-  file:
+  copy:
     src: "{{ git_checkout }}/bin/godot_server.x11.opt.64"
     dest: "{{ godot_home }}/godot-server"
+    remote_src: true
     mode: '0755'
   when: (install_godot | bool)
