@@ -12,6 +12,7 @@
       - libXrandr-devel
       - libXi-devel
       - libGL-devel
+      - xorg-x11-server-devel
       - gcc
       - gcc-c++
       - gcc-go
@@ -37,6 +38,14 @@
     repo: 'https://github.com/godotengine/godot.git'
     dest: "{{ git_checkout }}"
     version: 'master'
+    force: true
+
+# Comment out Werror which breaks the build. How is this in godot
+- name: Patch SConstruct
+  lineinfile:
+    path: "{{ git_checkout }}/SConstruct"
+    regexp: 'env.Append\(CCFLAGS\=\[\"\-Werror\"\]\)'
+    line: '#env.Append(CCFLAGS=["-Werror"])'
 
 - name: Create Godot HOME
   file:
@@ -68,7 +77,7 @@
 # godot.linuxbsd.opt.debug.64
 - name: Compile godot.linuxbsd.opt.debug.64
   command:
-    cmd: scons platform=linuxbsd tools=no target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
+    cmd: scons platform=linuxbsd tools=no target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j12"
     creates: "{{ git_checkout }}/bin/godot.linuxbsd.opt.debug.64"
     chdir: "{{ git_checkout }}"
 
@@ -89,7 +98,7 @@
 # godot.linuxbsd.opt.64
 - name: Compile godot.linuxbsd.opt.64
   command:
-    cmd: scons platform=linuxbsd tools=no target=release "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
+    cmd: scons platform=linuxbsd tools=no target=release "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j12" -Wno-error
     creates: "{{ git_checkout }}/bin/godot.linuxbsd.opt.64"
     chdir: "{{ git_checkout }}"
 
@@ -108,45 +117,45 @@
   when: (install_godot | bool)
 
 
-# godot_server.x11.opt.tools.64
-- name: Compile godot_server.x11.opt.tools.64
+# godot.linuxbsd.opt.tools.64
+- name: Compile godot.linuxbsd.opt.tools.64
   command:
-    cmd: scons platform=server target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
-    creates: "{{ git_checkout }}/bin/godot_server.x11.opt.tools.64"
+    cmd: scons platform=linuxbsd target=release_debug "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j12"
+    creates: "{{ git_checkout }}/bin/godot.linuxbsd.opt.tools.64"
     chdir: "{{ git_checkout }}"
 
-- name: Strip debug symbols from godot_server.x11.opt.tools.64
+- name: Strip debug symbols from godot.linuxbsd.opt.tools.64
   command:
-    cmd: strip "bin/godot_server.x11.opt.tools.64"
+    cmd: strip "bin/godot.linuxbsd.opt.tools.64"
     chdir: "{{ git_checkout }}"
   when: (strip_debug | bool)
 
-- name: Install godot_server.x11.opt.tools.64 in Godot HOME
+- name: Install godot.linuxbsd.opt.tools.64 in Godot HOME
   copy:
-    src: "{{ git_checkout }}/bin/godot_server.x11.opt.tools.64"
+    src: "{{ git_checkout }}/bin/godot.linuxbsd.opt.tools.64"
     dest: "{{ godot_home }}/godot-headless"
     remote_src: true
     mode: '0755'
   when: (install_godot | bool)
 
 
-# godot_server.x11.opt.64
-- name: Compile godot_server.x11.opt.64
-  command:
-    cmd: scons platform=server tools=no target=release "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j2"
-    creates: "{{ git_checkout }}/bin/godot_server.x11.opt.64"
-    chdir: "{{ git_checkout }}"
-
-- name: Strip debug symbols from godot_server.x11.opt.64
-  command:
-    cmd: strip "bin/godot_server.x11.opt.64"
-    chdir: "{{ git_checkout }}"
-  when: (strip_debug | bool)
-
-- name: Install godot_server.x11.opt.64 in Godot HOME
-  copy:
-    src: "{{ git_checkout }}/bin/godot_server.x11.opt.64"
-    dest: "{{ godot_home }}/godot-server"
-    remote_src: true
-    mode: '0755'
-  when: (install_godot | bool)
+# godot_server.linuxbsd.opt.64
+#- name: Compile godot_server.linuxbsd.opt.64
+#  command:
+#    cmd: scons platform=linuxbsd tools=no target=release "use_lto=yes" "progress=no" "debug_symbols=no" "LINKFLAGS=-fuse-ld=gold" "-j12"
+#    creates: "{{ git_checkout }}/bin/godot_server.linuxbsd.opt.64"
+#    chdir: "{{ git_checkout }}"
+#
+#- name: Strip debug symbols from godot_server.linuxbsd.opt.64
+#  command:
+#    cmd: strip "bin/godot_server.linuxbsd.opt.64"
+#    chdir: "{{ git_checkout }}"
+#  when: (strip_debug | bool)
+#
+#- name: Install godot_server.linuxbsd.opt.64 in Godot HOME
+#  copy:
+#    src: "{{ git_checkout }}/bin/godot_server.linuxbsd.opt.64"
+#    dest: "{{ godot_home }}/godot-server"
+#    remote_src: true
+#    mode: '0755'
+#  when: (install_godot | bool)
